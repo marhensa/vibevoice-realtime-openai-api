@@ -4,7 +4,7 @@ OpenAI-compatible TTS API wrapping [VibeVoice-Realtime-0.5B](https://huggingface
 
 ![image](assets/openwebui_settings.png)
 
-> **Note**: If both this wrapper and Open WebUI runs in a container, use `host.docker.internal:8880` instead of `localhost`.
+> **Note**: If both this wrapper and Open WebUI run in containers, use `host.docker.internal:8880` (Docker) or `host.containers.internal:8880` (Podman) instead of `localhost`.
 
 [![Demo: VibeVoice-Realtime OpenAI API-compatible Text-to-Speech Server for Open WebUI](https://i3.ytimg.com/vi/12VwN-AM1os/maxresdefault.jpg)](https://youtu.be/12VwN-AM1os)
 
@@ -25,13 +25,13 @@ OpenAI-compatible TTS API wrapping [VibeVoice-Realtime-0.5B](https://huggingface
 
 ## Requirements
 
-- Python 3.13 (via uv) / Docker with NVIDIA GPU support
+- Python 3.13 (via uv) / Docker or Podman with NVIDIA GPU support
 - NVIDIA GPU with CUDA 13.x
 - ffmpeg
 
 ---
 
-## Option 1: Docker (Recommended)
+## Option 1: Docker/Podman (Recommended)
 
 Best performance with Flash Attention + APEX pre-installed.
 
@@ -53,6 +53,26 @@ docker run --gpus all -p 8880:8880 \
   -e CFG_SCALE=1.25 \
   vibevoice-realtime-openai-api
 ```
+
+### Podman
+
+Podman is also supported as a Docker alternative:
+
+```bash
+# Using podman-compose (recommended)
+podman-compose up -d --build
+
+# Or manual build/run with Podman
+podman build -t vibevoice-realtime-openai-api .
+podman run --device nvidia.com/gpu=all --security-opt=label=disable -p 8880:8880 \
+  -v ./models:/home/ubuntu/app/models:z \
+  -e CFG_SCALE=1.25 \
+  vibevoice-realtime-openai-api
+```
+
+> **Note**: For Podman GPU support, ensure you have:
+> - `nvidia-container-toolkit` installed and configured
+> - CDI (Container Device Interface) enabled: `nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml`
 
 > ⚠️ **Please be patient** and check your network monitor, because on first run it downloads models 📦 (~2GB) and voice presets 🎤 (~22MB) from huggingface and Microsoft VibeVoice repositories to `./models/`. It's not stuck, it's just downloading.
 
@@ -129,7 +149,7 @@ First run downloads models (~2GB) and voice presets (~22MB) to `./models/`.
 | TTS Voice | `Carter`, `Emma`, `alloy`, `nova`, etc. |
 | Response splitting | `Paragraph` (recommended for low-end GPU) |
 
-> **Note**: If both this wrapper and Open WebUI runs in a container, use `host.docker.internal:8880` instead of `localhost`.
+> **Note**: If both this wrapper and Open WebUI run in containers, use `host.docker.internal:8880` (Docker) or `host.containers.internal:8880` (Podman) instead of `localhost`.
 
 ## Available Voices
 

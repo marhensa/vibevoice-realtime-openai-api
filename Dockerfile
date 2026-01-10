@@ -1,4 +1,4 @@
-FROM nvidia/cuda:13.0.2-cudnn-runtime-ubuntu24.04
+FROM docker.io/nvidia/cuda:13.0.2-cudnn-runtime-ubuntu24.04
 
 # Install system packages
 RUN apt-get update && \
